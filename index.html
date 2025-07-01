@@ -97,7 +97,24 @@
         .tool-slot .item-count { position: absolute; bottom: 2px; right: 4px; font-size: 14px; font-weight: bold; color: white; background-color: rgba(192, 57, 43,0.9); padding: 1px 5px; border-radius: 5px; }
 
         /* --- Modals & Dialogs --- */
-        .modal { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: var(--ui-bg); border: 2px solid var(--ui-border); border-radius: 16px; padding: 25px; z-index: 50; width: 90%; max-width: 600px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); display: none; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); animation: modal-appear 0.3s ease-out; }
+        .modal {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--ui-bg);
+            border: 2px solid var(--ui-border);
+            border-radius: 16px;
+            padding: 25px;
+            z-index: 110; /* BUG FIX: Increased z-index to appear above the start screen */
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            display: none;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            animation: modal-appear 0.3s ease-out;
+        }
         @keyframes modal-appear { from { opacity: 0; transform: translate(-50%, -45%); } to { opacity: 1; transform: translate(-50%, -50%); } }
         .modal h2 { margin-top: 0; color: var(--accent-color); text-shadow: 0 0 5px var(--accent-color); }
         .modal-button { font-family: var(--font-family); font-size: 1rem; padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; margin-top: 15px; background-color: var(--accent-color); color: #2c3e50; transition: all 0.2s; font-weight: bold; }
@@ -346,16 +363,15 @@
                         itemToBuy.action();
                         updateHUD();
                         updateToolbar();
-                        // Optional: visual feedback for purchase
-                        button.style.backgroundColor = '#27ae60'; // FIX: Use hex code directly
+                        
+                        button.style.backgroundColor = 'var(--success-color)';
                         button.textContent = 'ซื้อแล้ว!';
                         setTimeout(() => {
                            button.style.backgroundColor = '';
                            button.innerHTML = `<span class="shop-item-price">💰 ${itemToBuy.price}</span>`;
                         }, 1000);
                     } else {
-                         // Optional: visual feedback for failure
-                        button.style.backgroundColor = '#c0392b'; // FIX: Use hex code directly
+                        button.style.backgroundColor = 'var(--error-color)';
                         setTimeout(() => { button.style.backgroundColor = ''; }, 1000);
                     }
                 });
