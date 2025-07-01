@@ -18,6 +18,8 @@
             --accent-hover: #f39c12;
             --water-color: #3498db;
             --xp-color: #2ecc71;
+            --success-color: #27ae60;
+            --error-color: #c0392b;
             --font-family: 'Mitr', sans-serif;
         }
 
@@ -67,16 +69,22 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         #start-screen h1 { font-size: clamp(3rem, 10vw, 6rem); color: white; text-shadow: 4px 4px 8px rgba(0,0,0,0.4); margin: 0; }
         #start-screen p { font-size: clamp(1rem, 4vw, 1.5rem); color: var(--text-dark); text-shadow: 2px 2px 4px rgba(0,0,0,0.3); margin-top: -10px; }
-        #start-button { font-family: var(--font-family); font-size: clamp(1.5rem, 5vw, 2.5rem); padding: 15px 40px; border-radius: 50px; border: 3px solid white; background-color: var(--accent-color); color: white; cursor: pointer; margin-top: 40px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); box-shadow: 0 8px 15px rgba(0,0,0,0.2); transition: all 0.2s ease; }
-        #start-button:hover { transform: translateY(-4px) scale(1.05); box-shadow: 0 12px 20px rgba(0,0,0,0.3); background-color: var(--accent-hover); }
+        .start-menu-buttons { margin-top: 40px; display: flex; flex-direction: column; gap: 15px; }
+        .start-menu-button { font-family: var(--font-family); font-size: clamp(1.5rem, 5vw, 2.5rem); padding: 15px 40px; border-radius: 50px; border: 3px solid white; background-color: var(--accent-color); color: white; cursor: pointer; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); box-shadow: 0 8px 15px rgba(0,0,0,0.2); transition: all 0.2s ease; }
+        .start-menu-button:hover { transform: translateY(-4px) scale(1.05); box-shadow: 0 12px 20px rgba(0,0,0,0.3); background-color: var(--accent-hover); }
+        .start-menu-button.secondary { background-color: #3498db; font-size: clamp(1rem, 4vw, 1.5rem); }
+        .start-menu-button.secondary:hover { background-color: #2980b9; }
+
 
         /* --- HUD --- */
         .hud { position: absolute; padding: 10px 15px; background-color: var(--ui-bg); border: 1px solid var(--ui-border); border-radius: 12px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-size: clamp(0.9rem, 2.5vw, 1.2rem); display: flex; align-items: center; gap: 10px; }
         #hud-top-left { top: 15px; left: 15px; flex-direction: column; align-items: flex-start; gap: 8px; }
-        #hud-top-right { top: 15px; right: 15px; flex-direction: column; align-items: flex-end; gap: 8px; }
+        #hud-top-right { top: 15px; right: 15px; flex-direction: row; align-items: center; gap: 15px; }
         #hud-bottom-left { bottom: 15px; left: 15px; }
         #hud-top-center { top: 15px; left: 50%; transform: translateX(-50%); width: 40%; max-width: 500px; }
         .hud-item { display: flex; align-items: center; gap: 8px; }
+        .hud-icon-button { font-size: 2rem; cursor: pointer; transition: transform 0.2s; }
+        .hud-icon-button:hover { transform: scale(1.2); }
         .progress-bar { width: 100px; height: 14px; background-color: rgba(0,0,0,0.3); border-radius: 7px; overflow: hidden; border: 1px solid var(--ui-border); }
         .progress-bar-inner { height: 100%; border-radius: 7px; transition: width 0.5s ease; }
         #xp-bar-inner { background: linear-gradient(90deg, #27ae60, var(--xp-color)); }
@@ -94,23 +102,92 @@
         .modal h2 { margin-top: 0; color: var(--accent-color); text-shadow: 0 0 5px var(--accent-color); }
         .modal-button { font-family: var(--font-family); font-size: 1rem; padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; margin-top: 15px; background-color: var(--accent-color); color: #2c3e50; transition: all 0.2s; font-weight: bold; }
         .modal-button:hover { background-color: var(--accent-hover); transform: scale(1.05); }
+        .modal-button:disabled { background-color: #7f8c8d; cursor: not-allowed; transform: none; }
         
         #tutorial-dialog, #villager-dialog { position: absolute; bottom: 5%; left: 50%; transform: translateX(-50%); width: 80%; max-width: 700px; z-index: 60; padding: 20px; display: none; flex-direction: row; align-items: center; gap: 20px; }
         #tutorial-portrait, #villager-portrait { font-size: 64px; animation: pop-in 0.5s; }
         #tutorial-text-container, #villager-text-container { flex-grow: 1; }
         @keyframes pop-in { from { transform: scale(0.5); } to { transform: scale(1); } }
         
+        /* How to Play & Shop Modal Styles */
+        .modal-content { max-height: 70vh; overflow-y: auto; padding-right: 10px; }
+        .info-section { margin-bottom: 20px; }
+        .info-section h3 { color: var(--accent-color); border-bottom: 1px solid var(--ui-border); padding-bottom: 5px; }
+        .info-section p { line-height: 1.6; }
+        .info-section .icon { font-size: 1.5em; margin-right: 10px; vertical-align: middle; }
+        
+        .shop-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background-color: rgba(0,0,0,0.2); border-radius: 8px; margin-bottom: 10px; }
+        .shop-item-info { display: flex; align-items: center; gap: 15px; }
+        .shop-item-name { font-size: 1.2rem; }
+        .shop-item-price { font-weight: bold; color: var(--accent-color); }
+
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
     <div id="game-container">
-        <div id="start-screen"><div id="start-screen-content"><h1>ผู้พิทักษ์แห่งพงไพร</h1><p>Eco Guardian</p><button id="start-button">เริ่มเกม</button></div></div>
+        <div id="start-screen">
+            <div id="start-screen-content">
+                <h1>ผู้พิทักษ์แห่งพงไพร</h1>
+                <p>Eco Guardian</p>
+                <div class="start-menu-buttons">
+                    <button id="start-button" class="start-menu-button">เริ่มเกม</button>
+                    <button id="how-to-play-button" class="start-menu-button secondary">วิธีเล่น</button>
+                </div>
+            </div>
+        </div>
+
         <canvas id="gameCanvas"></canvas>
-        <div id="hud-top-left" class="hud hidden"><div class="hud-item"><span>เลเวล: <span id="player-level">1</span></span></div><div class="hud-item" title="ค่าประสบการณ์"><span>XP:</span><div class="progress-bar"><div id="xp-bar-inner" class="progress-bar-inner"></div></div></div><div class="hud-item" title="โกลด์">💰 <span id="gold-count">0</span></div><div class="hud-item" title="น้ำ">💧 <span id="water-count">10</span></div></div>
-        <div id="hud-top-right" class="hud hidden"><div class="hud-item"><span id="season-icon">☀️</span> <span id="season-text">ฤดูร้อน</span></div><div class="hud-item"><span>วันที่: <span id="day-count">1</span></span></div><div id="quest-log-icon" class="hud-item" style="cursor: pointer;"><span>สมุดเควส 📜</span></div></div>
+        
+        <div id="hud-top-left" class="hud hidden">
+            <div class="hud-item"><span>เลเวล: <span id="player-level">1</span></span></div>
+            <div class="hud-item" title="ค่าประสบการณ์"><span>XP:</span><div class="progress-bar"><div id="xp-bar-inner" class="progress-bar-inner"></div></div></div>
+            <div class="hud-item" title="โกลด์">💰 <span id="gold-count">0</span></div>
+            <div class="hud-item" title="น้ำ">💧 <span id="water-count">10</span></div>
+        </div>
+        <div id="hud-top-right" class="hud hidden">
+            <div class="hud-item">
+                <div id="season-indicator"><span id="season-icon">☀️</span> <span id="season-text">ฤดูร้อน</span></div>
+                <div>วันที่: <span id="day-count">1</span></div>
+            </div>
+            <div class="hud-item">
+                <div id="quest-log-icon" title="สมุดเควส" class="hud-icon-button">📜</div>
+                <div id="shop-icon" title="ร้านค้า" class="hud-icon-button">🛒</div>
+            </div>
+        </div>
         <div id="hud-top-center" class="hud hidden"><div class="hud-item" style="width: 100%; flex-direction: column;"><span>ระดับมลพิษ</span><div class="progress-bar" style="width: 100%; height: 20px;"><div id="pollution-meter-inner" class="progress-bar-inner"></div></div></div></div>
         <div id="hud-bottom-left" class="hud hidden"><div id="toolbar"></div></div>
+
+        <!-- Modals -->
+        <div id="how-to-play-modal" class="modal">
+            <h2>วิธีเล่น Eco Guardian</h2>
+            <div class="modal-content">
+                <div class="info-section">
+                    <h3><span class="icon">🎯</span>เป้าหมาย</h3>
+                    <p>ฟื้นฟูป่าที่กำลังล่มสลายจากมลพิษ "Gray Blight" ด้วยการปลูกต้นไม้ คืนชีวิตให้ผืนดิน และปลุกพลังแห่งธรรมชาติ!</p>
+                </div>
+                <div class="info-section">
+                    <h3><span class="icon">🖱️</span>การควบคุม</h3>
+                    <p>ใช้เมาส์คลิกหรือแตะบนหน้าจอเพื่อเดินไปยังจุดหมาย และคลิกที่สิ่งต่างๆ เพื่อโต้ตอบ เช่น คลิกที่ดินเพื่อพรวนดิน หรือคลิกที่ต้นไม้เพื่อรดน้ำ</p>
+                </div>
+                <div class="info-section">
+                    <h3><span class="icon">🛠️</span>เครื่องมือพื้นฐาน</h3>
+                    <p><span class="icon">🌾</span><b>จอบ:</b> ใช้คลิกบนพื้นหญ้าเพื่อ "พรวนดิน" เตรียมปลูก</p>
+                    <p><span class="icon">🌱</span><b>เมล็ดพันธุ์:</b> ใช้คลิกบน "ดินที่พรวนแล้ว" เพื่อปลูกต้นอ่อน</p>
+                    <p><span class="icon">💧</span><b>บัวรดน้ำ:</b> ใช้คลิกที่ "ต้นอ่อน" เพื่อรดน้ำให้มันเติบโต</p>
+                </div>
+            </div>
+            <button class="modal-button" onclick="document.getElementById('how-to-play-modal').style.display = 'none'">เข้าใจแล้ว!</button>
+        </div>
+        
+        <div id="shop-modal" class="modal">
+            <h2>🛒 ร้านค้าของรัสตี้</h2>
+            <div id="shop-items-container" class="modal-content">
+                <!-- Shop items will be generated here by JS -->
+            </div>
+            <button class="modal-button" onclick="document.getElementById('shop-modal').style.display = 'none'">ปิดร้าน</button>
+        </div>
+
         <div id="quest-log-modal" class="modal"><div class="modal-content"><h2>สมุดเควส</h2><ul id="quest-list"></ul><button class="modal-button" onclick="document.getElementById('quest-log-modal').style.display = 'none'">ปิด</button></div></div>
         <div id="message-box" class="modal" style="text-align: center;"><h2 id="message-title"></h2><p id="message-text"></p><button id="message-ok-button" class="modal-button">ตกลง</button></div>
         <div id="tutorial-dialog" class="modal"><div id="tutorial-portrait"></div><div id="tutorial-text-container"><p id="tutorial-text"></p><button id="tutorial-continue-button" class="modal-button">ต่อไป</button></div></div>
@@ -124,6 +201,11 @@
         const ctx = canvas.getContext('2d');
         const startScreen = document.getElementById('start-screen');
         const startButton = document.getElementById('start-button');
+        const howToPlayButton = document.getElementById('how-to-play-button');
+        const howToPlayModal = document.getElementById('how-to-play-modal');
+        const shopIcon = document.getElementById('shop-icon');
+        const shopModal = document.getElementById('shop-modal');
+        const shopItemsContainer = document.getElementById('shop-items-container');
         const huds = document.querySelectorAll('.hud');
         const playerLevelUI = document.getElementById('player-level');
         const xpBarInner = document.getElementById('xp-bar-inner');
@@ -139,7 +221,6 @@
         const messageBox = document.getElementById('message-box');
         const messageTitle = document.getElementById('message-title');
         const messageText = document.getElementById('message-text');
-        const messageOkButton = document.getElementById('message-ok-button');
         const tutorialDialog = document.getElementById('tutorial-dialog');
         const tutorialPortrait = document.getElementById('tutorial-portrait');
         const tutorialText = document.getElementById('tutorial-text');
@@ -149,20 +230,15 @@
         const villagerText = document.getElementById('villager-text');
         const villagerCloseButton = document.getElementById('villager-close-button');
 
-
-        // --- Game Config ---
+        // --- Game Config & State ---
         const TILE_SIZE = 48;
-        const MAP_WIDTH_TILES = 25;
-        const MAP_HEIGHT_TILES = 15;
-
-        // --- Game State ---
-        let gameState = { running: false, lastTime: 0, gameSpeed: 1 };
+        let gameState = { running: false, lastTime: 0 };
         let player = {
             x: TILE_SIZE * 5, y: TILE_SIZE * 5,
-            targetX: TILE_SIZE * 5, targetY: TILE_SIZE * 5, // For click-to-move
+            targetX: TILE_SIZE * 5, targetY: TILE_SIZE * 5,
             width: TILE_SIZE * 0.8, height: TILE_SIZE,
             speed: 220, level: 1, xp: 0, xpToNextLevel: 100,
-            gold: 10, water: 20, maxWater: 50,
+            gold: 50, water: 20, maxWater: 50, // Start with more gold for shop testing
             inventory: [
                 { id: 'hoe', name: 'จอบ', emoji: '‍🌾', type: 'tool', selected: true },
                 { id: 'watering_can', name: 'บัวรดน้ำ', emoji: '💧', type: 'tool' },
@@ -171,7 +247,7 @@
             ],
             selectedItemIndex: 0,
         };
-        let world = { map: [], objects: [], npcs: [], particles: [], width: TILE_SIZE * MAP_WIDTH_TILES, height: TILE_SIZE * MAP_HEIGHT_TILES, pollution: 0.5 };
+        let world = { map: [], objects: [], npcs: [], particles: [], width: TILE_SIZE * 25, height: TILE_SIZE * 15, pollution: 0.5 };
         let time = { day: 1, season: 'summer', dayLength: 120, timeOfDay: 0, dayTimer: 0 };
         const SEASONS = {
             summer: { name: 'ฤดูร้อน', icon: '☀️', color: '#ffecb3' },
@@ -181,7 +257,7 @@
         };
         let quests = [];
         
-        // --- Tutorial & Dialogue System ---
+        // --- Tutorial & Dialogue ---
         let tutorialState = { isActive: false, step: 0, triggerMet: false };
         const tutorialSteps = [
             { speaker: '🌳', text: 'เฮ้! ในที่สุดก็มีคนมา! นึกว่าจะต้องรออีกร้อยปีซะแล้ว ป่าแถวนี้กำลังแย่สุดๆ เลยเพื่อน' },
@@ -194,7 +270,24 @@
         ];
         const villagerDialogues = ["วันนี้อากาศดีจังเนอะ", "เห็นต้นไม้ที่นายปลูกแล้วชื่นใจจริงๆ", "สู้ๆนะ เจ้าหนู!", "บางทีก็อยากกินหมูกระทะ...", "ระวังมลพิษด้วยล่ะ"];
 
-        // --- UI Update Functions (FIX) ---
+        // --- Shop Data ---
+        const shopItems = [
+            { id: 'buy_seeds', name: 'เมล็ดพันธุ์พื้นฐาน 5 เมล็ด', emoji: '🌱', price: 25, action: () => {
+                const seedItem = player.inventory.find(item => item.id === 'basic_seed');
+                if (seedItem) seedItem.quantity += 5;
+                else player.inventory.push({ id: 'basic_seed', name: 'เมล็ดพันธุ์พื้นฐาน', emoji: '🌱', type: 'seed', quantity: 5 });
+            }},
+            { id: 'buy_fertilizer', name: 'ปุ๋ยเร่งโต', emoji: '💩', price: 40, action: () => {
+                 const fertilizer = player.inventory.find(item => item.id === 'fertilizer');
+                if (fertilizer) fertilizer.quantity += 1;
+                else player.inventory.push({ id: 'fertilizer', name: 'ปุ๋ยเร่งโต', emoji: '💩', type: 'special', quantity: 1 });
+            }},
+            { id: 'refill_water', name: 'เติมน้ำเต็มถัง', emoji: '💧', price: 10, action: () => {
+                player.water = player.maxWater;
+            }}
+        ];
+
+        // --- UI Update Functions ---
         function updateHUD() {
             playerLevelUI.textContent = player.level;
             xpBarInner.style.width = `${(player.xp / player.xpToNextLevel) * 100}%`;
@@ -220,45 +313,62 @@
                     count.textContent = item.quantity;
                     slot.appendChild(count);
                 }
-                if (index === player.selectedItemIndex) {
-                    slot.classList.add('selected');
-                }
-                slot.addEventListener('click', (e) => {
-                    e.stopPropagation(); // Prevent canvas click-to-move
-                    player.selectedItemIndex = index;
-                    updateToolbar();
-                });
+                if (index === player.selectedItemIndex) slot.classList.add('selected');
+                slot.addEventListener('click', (e) => { e.stopPropagation(); player.selectedItemIndex = index; updateToolbar(); });
                 toolbarUI.appendChild(slot);
             });
         }
         
-        function updateQuestLog() {
-            questListUI.innerHTML = '';
-            if (quests.length === 0) {
-                 questListUI.innerHTML = '<li>ยังไม่มีเควส</li>';
-                 return;
-            }
-            // ... Quest rendering logic
+        function updateShopUI() {
+            shopItemsContainer.innerHTML = '';
+            shopItems.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'shop-item';
+                itemDiv.innerHTML = `
+                    <div class="shop-item-info">
+                        <span class="icon">${item.emoji}</span>
+                        <span class="shop-item-name">${item.name}</span>
+                    </div>
+                    <button class="modal-button shop-buy-button" data-item-id="${item.id}">
+                        <span class="shop-item-price">💰 ${item.price}</span>
+                    </button>
+                `;
+                shopItemsContainer.appendChild(itemDiv);
+            });
+            
+            // Add event listeners to new buttons
+            document.querySelectorAll('.shop-buy-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const itemId = button.dataset.itemId;
+                    const itemToBuy = shopItems.find(i => i.id === itemId);
+                    if (itemToBuy && player.gold >= itemToBuy.price) {
+                        player.gold -= itemToBuy.price;
+                        itemToBuy.action();
+                        updateHUD();
+                        updateToolbar();
+                        // Optional: visual feedback for purchase
+                        button.style.backgroundColor = '#27ae60'; // FIX: Use hex code directly
+                        button.textContent = 'ซื้อแล้ว!';
+                        setTimeout(() => {
+                           button.style.backgroundColor = '';
+                           button.innerHTML = `<span class="shop-item-price">💰 ${itemToBuy.price}</span>`;
+                        }, 1000);
+                    } else {
+                         // Optional: visual feedback for failure
+                        button.style.backgroundColor = '#c0392b'; // FIX: Use hex code directly
+                        setTimeout(() => { button.style.backgroundColor = ''; }, 1000);
+                    }
+                });
+            });
         }
-
-        function showMessage(title, text) {
-            messageTitle.textContent = title;
-            messageText.textContent = text;
-            messageBox.style.display = 'block';
-            messageOkButton.onclick = () => {
-                messageBox.style.display = 'none';
-            };
-        }
-
 
         // --- Initialization ---
         function init() {
             canvas.width = world.width;
             canvas.height = world.height;
             generateMap();
-            updateToolbar(); // Now defined
-            updateHUD();     // Now defined
-            updateQuestLog(); // Now defined
+            updateToolbar();
+            updateHUD();
             
             startScreen.style.opacity = '0';
             startScreen.style.transform = 'scale(1.2)';
@@ -275,9 +385,9 @@
         
         function generateMap() {
              world.map = [];
-            for (let y = 0; y < MAP_HEIGHT_TILES; y++) {
+            for (let y = 0; y < Math.ceil(world.height / TILE_SIZE); y++) {
                 const row = [];
-                for (let x = 0; x < MAP_WIDTH_TILES; x++) {
+                for (let x = 0; x < Math.ceil(world.width / TILE_SIZE); x++) {
                     row.push({ type: Math.random() < world.pollution ? 'blight' : 'grass' });
                 }
                 world.map.push(row);
@@ -288,7 +398,7 @@
                     id: `villager_${i}`, type: 'villager', name: 'ชาวบ้าน',
                     x: TILE_SIZE * (10 + i * 2), y: TILE_SIZE * (10 + i),
                     width: TILE_SIZE * 0.8, height: TILE_SIZE,
-                    speed: 60, dx: 0, dy: 0,
+                    speed: 60,
                     moveTimer: Math.random() * 5, targetX: null, targetY: null,
                     color: `hsl(${Math.random() * 360}, 60%, 70%)`
                 });
@@ -322,7 +432,7 @@
             updatePlayer(deltaTime);
             updateNPCs(deltaTime);
             updateParticles(deltaTime);
-            checkCollisions();
+            updateWorldObjects(deltaTime);
             checkTutorialProgress();
         }
         
@@ -331,7 +441,7 @@
             const vecY = player.targetY - player.y;
             const dist = Math.sqrt(vecX * vecX + vecY * vecY);
 
-            if (dist > 5) { // Threshold to stop
+            if (dist > 5) {
                 player.x += (vecX / dist) * player.speed * deltaTime;
                 player.y += (vecY / dist) * player.speed * deltaTime;
             }
@@ -348,7 +458,6 @@
                         npc.moveTimer = 3 + Math.random() * 4;
                     } else {
                         npc.targetX = null; npc.targetY = null;
-                        npc.dx = 0; npc.dy = 0;
                         npc.moveTimer = 2 + Math.random() * 3;
                     }
                 }
@@ -358,45 +467,45 @@
                     const dist = Math.sqrt(vecX*vecX + vecY*vecY);
                     if (dist < 10) {
                         npc.targetX = null; npc.targetY = null;
-                        npc.dx = 0; npc.dy = 0;
                     } else {
-                        npc.dx = vecX / dist; npc.dy = vecY / dist;
-                        npc.x += npc.dx * npc.speed * deltaTime;
-                        npc.y += npc.dy * npc.speed * deltaTime;
+                        npc.x += (vecX / dist) * npc.speed * deltaTime;
+                        npc.y += (vecY / dist) * npc.speed * deltaTime;
                     }
                 }
             });
         }
         
+        function updateWorldObjects(deltaTime) {
+            world.objects.forEach(obj => {
+                if (obj.type === 'tree' && obj.growth < 1) {
+                    let growthRate = 1 / obj.growthTime;
+                    if (obj.isFertilized) growthRate *= 2; // Double growth speed if fertilized
+                    obj.growth += growthRate * deltaTime;
+                    if(obj.growth >= 1) {
+                        obj.growth = 1;
+                        obj.isFertilized = false; // Fertilizer wears off
+                    }
+                }
+            });
+        }
+
         function updateParticles(deltaTime) {
             for (let i = world.particles.length - 1; i >= 0; i--) {
                 const p = world.particles[i];
-                 if (p.update) { // FIX for custom particle logic (like ripple)
-                    p.update(deltaTime);
-                } else {
-                    p.x += p.vx * deltaTime;
-                    p.y += p.vy * deltaTime;
-                    p.vy += p.gravity;
-                }
+                 if (p.update) { p.update(deltaTime); } 
+                 else { p.x += p.vx * deltaTime; p.y += p.vy * deltaTime; p.vy += p.gravity; }
                 p.lifespan -= deltaTime;
-                if (p.lifespan <= 0) {
-                    world.particles.splice(i, 1);
-                }
+                if (p.lifespan <= 0) world.particles.splice(i, 1);
             }
         }
         
         function updateTime(deltaTime) {
-            time.dayTimer += deltaTime * gameState.gameSpeed;
+            time.dayTimer += deltaTime;
             if (time.dayTimer >= time.dayLength) {
                 time.dayTimer = 0;
                 time.day++;
-                // Season change logic here if needed
                 updateHUD();
             }
-        }
-        
-        function checkCollisions() {
-            // Placeholder for future collision logic
         }
 
         // --- Drawing Logic ---
@@ -410,12 +519,11 @@
             drawNPCs();
             drawPlayer();
             drawParticles();
-            drawTimeOverlay();
         }
         
         function drawMap() {
-             for (let y = 0; y < MAP_HEIGHT_TILES; y++) {
-                for (let x = 0; x < MAP_WIDTH_TILES; x++) {
+             for (let y = 0; y < world.map.length; y++) {
+                for (let x = 0; x < world.map[y].length; x++) {
                     const tile = world.map[y][x];
                     if (tile.type === 'grass') ctx.fillStyle = '#689f38';
                     else if (tile.type === 'blight') ctx.fillStyle = '#6d4c41';
@@ -431,6 +539,12 @@
                     const growthScale = 0.4 + (obj.growth * 0.6);
                     const treeX = obj.x + TILE_SIZE / 2;
                     const treeY = obj.y + TILE_SIZE / 2;
+                    if (obj.isFertilized) { // Visual feedback for fertilizer
+                        ctx.fillStyle = 'rgba(255, 255, 100, 0.5)';
+                        ctx.beginPath();
+                        ctx.arc(treeX, treeY, TILE_SIZE * 0.6, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
                     ctx.fillStyle = '#5d4037';
                     ctx.fillRect(treeX - 4, treeY - 5, 8, 10);
                     ctx.fillStyle = obj.waterLevel > 0 ? '#4caf50' : '#cddc39';
@@ -445,26 +559,19 @@
             const p = player;
             ctx.save();
             ctx.translate(p.x, p.y);
-            
-            // Legs
             ctx.fillStyle = "#4a4a4a";
             ctx.fillRect(-p.width * 0.15, 0, p.width * 0.3, p.height * 0.4);
             ctx.fillRect(p.width * 0.15, 0, p.width * 0.3, p.height * 0.4);
-
-            // Body
-            ctx.fillStyle = "#e74c3c"; // Red shirt
+            ctx.fillStyle = "#e74c3c";
             ctx.fillRect(-p.width * 0.4, -p.height * 0.5, p.width * 0.8, p.height * 0.5);
-
-            // Head
-            ctx.fillStyle = "#f1c40f"; // Yellow hair
+            ctx.fillStyle = "#f1c40f";
             ctx.beginPath();
             ctx.arc(0, -p.height * 0.6, p.width * 0.4, 0, Math.PI * 2);
             ctx.fill();
-            ctx.fillStyle = "#ffdab9"; // Skin
+            ctx.fillStyle = "#ffdab9";
             ctx.beginPath();
             ctx.arc(0, -p.height * 0.55, p.width * 0.3, 0, Math.PI * 2);
             ctx.fill();
-
             ctx.restore();
         }
 
@@ -490,7 +597,7 @@
         
         function drawParticles() {
             world.particles.forEach(p => {
-                if (p.type === 'ripple') return; // Handled by drawClickMarker
+                if (p.type === 'ripple') return;
                 ctx.fillStyle = p.color;
                 ctx.globalAlpha = Math.max(0, p.lifespan / p.initialLife);
                 ctx.beginPath();
@@ -511,11 +618,6 @@
             }
         }
         
-        function drawTimeOverlay() {
-            // Placeholder for day/night visuals
-        }
-
-        // --- Particle Emitter ---
         function createParticles(x, y, count, options) {
             for (let i = 0; i < count; i++) {
                 const angle = Math.random() * Math.PI * 2;
@@ -534,43 +636,22 @@
         }
         
         function createRipple(x, y) {
-            world.particles = world.particles.filter(p => p.type !== 'ripple'); // Remove old ripple
+            world.particles = world.particles.filter(p => p.type !== 'ripple');
             world.particles.push({
                 type: 'ripple', x, y,
                 lifespan: 0.5, initialLife: 0.5,
                 size: 0,
-                update: function(deltaTime) { // Custom update logic
-                    this.lifespan -= deltaTime;
-                    this.size += 80 * deltaTime;
-                }
+                update: function(deltaTime) { this.lifespan -= deltaTime; this.size += 80 * deltaTime; }
             });
         }
 
         // --- Tutorial & Dialogue Logic ---
-        function startTutorial() {
-            tutorialState.isActive = true;
-            tutorialState.step = 0;
-            showTutorialStep();
-        }
-        function showTutorialStep() {
-            if (tutorialState.step >= tutorialSteps.length) {
-                endTutorial();
-                return;
-            }
-            const currentStep = tutorialSteps[tutorialState.step];
-            tutorialPortrait.textContent = currentStep.speaker;
-            tutorialText.textContent = currentStep.text;
-            tutorialDialog.style.display = 'flex';
-            const hasTrigger = !!currentStep.trigger;
-            tutorialContinueButton.classList.toggle('hidden', hasTrigger);
-            if (hasTrigger) tutorialState.triggerMet = false;
-        }
+        function startTutorial() { tutorialState.isActive = true; tutorialState.step = 0; showTutorialStep(); }
+        function showTutorialStep() { if (tutorialState.step >= tutorialSteps.length) { endTutorial(); return; } const currentStep = tutorialSteps[tutorialState.step]; tutorialPortrait.textContent = currentStep.speaker; tutorialText.textContent = currentStep.text; tutorialDialog.style.display = 'flex'; const hasTrigger = !!currentStep.trigger; tutorialContinueButton.classList.toggle('hidden', hasTrigger); if (hasTrigger) tutorialState.triggerMet = false; }
         function advanceTutorial() { tutorialState.step++; showTutorialStep(); }
         function checkTutorialProgress() { if (!tutorialState.isActive) return; const currentStep = tutorialSteps[tutorialState.step]; if (currentStep.trigger && tutorialState.triggerMet) { advanceTutorial(); } }
         function endTutorial() { tutorialState.isActive = false; tutorialDialog.style.display = 'none'; }
-        tutorialContinueButton.addEventListener('click', advanceTutorial);
-        villagerCloseButton.addEventListener('click', () => villagerDialog.style.display = 'none');
-
+        
         // --- Player Actions ---
         function handleCanvasClick(e) {
             const rect = canvas.getBoundingClientRect();
@@ -603,6 +684,11 @@
                         createParticles(clickX, clickY, 15, { color: 'rgba(52, 152, 219, 0.7)', minSize: 3, maxSize: 6, gravity: 2 });
                         if (tutorialState.isActive && tutorialSteps[tutorialState.step]?.trigger?.type === 'water') tutorialState.triggerMet = true;
                     } 
+                } else if (selectedItem.id === 'fertilizer' && !objectOnTile.isFertilized) {
+                    objectOnTile.isFertilized = true;
+                    selectedItem.quantity--;
+                    if(selectedItem.quantity <= 0) player.inventory.splice(player.selectedItemIndex, 1);
+                    updateToolbar();
                 }
                 return;
             }
@@ -615,8 +701,8 @@
                     if (tutorialState.isActive && tutorialSteps[tutorialState.step]?.trigger?.type === 'till') tutorialState.triggerMet = true;
                     return;
                 }
-                if (selectedItem.id === 'basic_seed' && groundTile.type === 'tilled' && selectedItem.quantity > 0) {
-                    world.objects.push({ type: 'tree', x: tileX * TILE_SIZE, y: tileY * TILE_SIZE, growth: 0, growthTime: 30, waterLevel: 1 });
+                if (selectedItem.id === 'basic_seed' && groundTile.type === 'tilled') {
+                    world.objects.push({ type: 'tree', x: tileX * TILE_SIZE, y: tileY * TILE_SIZE, growth: 0, growthTime: 30, waterLevel: 1, isFertilized: false });
                     groundTile.type = 'planted_soil'; selectedItem.quantity--; updateToolbar();
                     createParticles(clickX, clickY, 15, { color: 'rgba(46, 204, 113, 0.8)', minSize: 3, maxSize: 6, gravity: -1 });
                     if (tutorialState.isActive && tutorialSteps[tutorialState.step]?.trigger?.type === 'plant') tutorialState.triggerMet = true;
@@ -634,11 +720,12 @@
         
         // --- Event Listeners ---
         startButton.addEventListener('click', init);
+        howToPlayButton.addEventListener('click', () => { howToPlayModal.style.display = 'block'; });
+        shopIcon.addEventListener('click', () => { updateShopUI(); shopModal.style.display = 'block'; });
         canvas.addEventListener('click', handleCanvasClick);
-        questLogIcon.addEventListener('click', () => {
-            document.getElementById('quest-log-modal').style.display = 'block';
-        });
-
+        questLogIcon.addEventListener('click', () => { document.getElementById('quest-log-modal').style.display = 'block'; });
+        tutorialContinueButton.addEventListener('click', advanceTutorial);
+        villagerCloseButton.addEventListener('click', () => villagerDialog.style.display = 'none');
     });
     </script>
 </body>
